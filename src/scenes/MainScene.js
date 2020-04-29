@@ -34,6 +34,19 @@ export default class MainScene extends Phaser.Scene {
         this.load.image("jumpArrow", jumpArrow);
     }
 
+    findTilemapObject(map, layer, name) {
+
+        for (let o = 0; o < map.objects.length; o++) {
+            if (map.objects[o].name == layer) {
+                for (let i = 0; i < map.objects[o].objects.length; i++) {
+                    if (map.objects[o].objects[i].name == name) {
+                        return map.objects[o].objects[i];
+                    }
+                }
+            }
+        }
+        return null
+    }
     create() {
         this.skyTileSprite = this.add.image(0, 0, 'sky')
             .setOrigin(0, 0)
@@ -42,9 +55,11 @@ export default class MainScene extends Phaser.Scene {
         this.mounatinsTileSprite = this.add.tileSprite(0, 0, this.game.config.width, this.game.config.height, 'mountains')
             .setOrigin(0, 0)
             .setScrollFactor(0)
+            .setOrigin(0, .1);
         this.mounatins2TileSprite = this.add.tileSprite(0, 0, this.game.config.width, this.game.config.height, 'mountains2')
             .setOrigin(0, 0)
-            .setScrollFactor(0)
+            .setScrollFactor(0);
+
 
         this.cloudsTileSprite = this.add.tileSprite(0, 0, this.game.config.width, this.game.config.height * .5, 'clouds');
         this.cloudsTileSprite.setOrigin(0, 0).setScrollFactor(0);
@@ -52,28 +67,19 @@ export default class MainScene extends Phaser.Scene {
 
 
 
-        this.map = this.make.tilemap({ key: 'level1' });
+        this.map = this.make.tilemap({ key: 'level1', tileWidth: 32, tileHeight: 32 });
         let tileset = this.map.addTilesetImage('lvl2_sprites', 'tilesetNameInPhaser');
-        this.backgroundLayer = this.map.createStaticLayer('floor', tileset, 0, 0);
+        this.floor = this.map.createStaticLayer('floor', tileset, 0, 0);
+
+        let playerSpawnPlace = this.findTilemapObject(this.map, "playerSpawn", 'PlayerSpawner');
         //backgroundLayer.setCollisionBetween(0, 50);
-        this.backgroundLayer.setCollisionByProperty({ collides: true });
+        this.floor.setCollisionByProperty({ collides: true });
 
-
-        let coins = this.add.group();
-        coins.enableBody = true;
-        //map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
-        this.map.createFromObjects('playerSpawn', 17, 'coin', 0, true, false, coins);
-        //DEBUG TILED MAP
-        //const debugGraphics = this.add.graphics().setAlpha(0.75);
-        // backgroundLayer.renderDebug(debugGraphics, {
-        //     tileColor: null, // Color of non-colliding tiles
-        //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-        //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        // });
+        this.setCustomBodySize(this.map, 'floor', 'treePlatform');
 
 
         // add player
-        this.player = this.physics.add.sprite(50, 20, "player");
+        this.player = this.physics.add.sprite(playerSpawnPlace.x, playerSpawnPlace.y, "player");
         window.player = this.player;
         this.anims.create({
             key: "fly",
@@ -86,6 +92,23 @@ export default class MainScene extends Phaser.Scene {
         this.player.body.setSize(32, 32);
         //this.player.setCollideWorldBounds(true);
 
+
+
+        let coins = this.add.group();
+        coins.enableBody = true;
+        //map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
+        this.map.createFromObjects('playerSpawn', 17, 'coin', 0, true, false, coins);
+        //DEBUG TILED MAP
+        const debugGraphics = this.add.graphics().setAlpha(0.75);
+        this.floor.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+
+
+
         // allow key inputs to control the player
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -97,37 +120,61 @@ export default class MainScene extends Phaser.Scene {
         // making the camera follow the player
         this.myCam.startFollow(this.player);
 
+        //this.createGamepad();
+    }
+    setCustomBodySize(map, layername, objectname) {
+        //(this.map, "floor", 'PlayerSpawner');
+        window.map = map;
+        console.log(map);
+        // for (let l = 0; l < map.layers.length; l++) {
+        //     if (map.layers[l].name == layername) {
+        //         for (let i = 0; i < map.objects[l].objects.length; i++) {
+        //             if (map.layers[l].objects[i].name == objectname) {
+        //                 return map.objects[l].objects[i];
+        //             }
+        //         }
+        //     }
+        // }
+
+    }
+
+    createGamepad() {
         //Gamepad
         this.add.image(0, 0, 'leftArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.move = 'left';
+            }).on('pointerup', () => {
+                this.move = null;
             });
         this.add.image(100, 0, 'rightArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.move = 'right';
-            })
+            }).on('pointerup', () => {
+                this.move = null;
+            });
 
         this.jumpArrowController = this.add.image(500, 0, 'jumpArrow')
-            .setOrigin(0, 0).setInteractive();
-            
+            .setOrigin(0, 0).setInteractive()
+            .on('pointerdown', (pointer1) => {
+                this.player.setVelocityY(-370);
+            })
     }
-
     update() {
 
         this.cloudsTileSprite.tilePositionX = this.myCam.scrollX * 0.2;
         this.mounatinsTileSprite.tilePositionX = this.myCam.scrollX * 0.3;
         this.mounatins2TileSprite.tilePositionX = this.myCam.scrollX * 0.7;
-        this.physics.collide(this.player, this.backgroundLayer)
+        this.physics.collide(this.player, this.floor)
 
         let onGround = this.player.body.blocked.down || this.player.body.touching.down;
         if (this.cursors.left.isDown || this.move == 'left') {
-            this.player.setVelocityX(-200);
+            this.player.setVelocityX(-180);
             this.player.flipX = false;
 
         } else if (this.cursors.right.isDown || this.move == 'right') {
-            this.player.setVelocityX(200);
+            this.player.setVelocityX(180);
             this.player.flipX = true;
 
         } else {
@@ -138,9 +185,18 @@ export default class MainScene extends Phaser.Scene {
             this.player.setVelocityY(-370);
         }
 
-        this.jumpArrowController.on('pointerdown', (pointer1) => {
-            if(onGround) this.player.setVelocityY(-370);
-        })
+
+        if (this.player.y >= this.game.config.height) {
+            this.cameras.main.fade(500);
+
+            this.cameras.main.on('camerafadeoutcomplete', ()=>{
+                
+                this.scene.start('GameOver');
+            })
+           
+
+
+        }
 
     }
 }
