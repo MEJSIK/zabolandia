@@ -1,13 +1,16 @@
 import Phaser from "phaser";
 import MainScene from './scenes/MainScene.js';
 import GameOver from './scenes/GameOver.js';
+import EndGame from './scenes/EndGame.js';
+
+
 
 const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
   width: 800,
   height: 640,
-  scene: [MainScene, GameOver],
+  scene: [MainScene, GameOver, EndGame],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
@@ -16,7 +19,7 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 1000 },
-      debug: true
+      debug: false
     }
   }
 

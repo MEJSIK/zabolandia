@@ -1,13 +1,13 @@
 import MainScene from "./MainScene";
 
-export default class GameOver extends Phaser.Scene{
+export default class EndGame extends Phaser.Scene{
     constructor(){
-        super('GameOver');
+        super('EndGame');
     }
 
     create(){
 
-        this.add.text(this.game.config.width * .5,this.game.config.height * .2,'KONIEC GRY',{'fontSize': '60px', fontFamily: 'Anton'}).setOrigin(0.5,0.5);
+        this.add.text(this.game.config.width * .5, this.game.config.height * .2, 'Brawo!!!', { fontFamily: 'Anton', fontSize: '60px'}).setOrigin(0.5, 0.5).setDepth(1);
         this.restartButton = this.add.text(this.game.config.width * .5,this.game.config.height * .5,'Graj ponownie', {fontFamily: 'Anton'}).setOrigin(0.5,0.5);
         
 
