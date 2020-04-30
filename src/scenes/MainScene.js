@@ -13,12 +13,18 @@ import leftArrow from '../assets/left_arrow.png';
 import rightArrow from '../assets/right_arrow.png';
 import jumpArrow from '../assets/jump_arrow.png';
 import bonus1 from '../assets/bonus1.png';
+import bonus2 from '../assets/bonus2.png';
+import bonus3 from '../assets/bonus3.png';
+import bonus4 from '../assets/bonus4.png';
 
 export default class MainScene extends Phaser.Scene {
     constructor() {
         super("MainScene");
     }
 
+    init() {
+        this.bears = 0;
+    }
     preload() {
         this.load.tilemapTiledJSON("level1", lvl1_map);
         this.load.image('tilesetNameInPhaser', lvl1_sprites);
@@ -35,11 +41,33 @@ export default class MainScene extends Phaser.Scene {
         this.load.image('sky', sky);
         this.load.image('mountains', mountains);
         this.load.image('mountains2', mountains2);
-        this.load.image("leftArrow", leftArrow);
-        this.load.image("rightArrow", rightArrow);
-        this.load.image("jumpArrow", jumpArrow);
+        this.load.spritesheet("leftArrow", leftArrow, {
+            frameWidth: 80,
+            frameHeight: 68
+        });
+        this.load.spritesheet("rightArrow", rightArrow, {
+            frameWidth: 80,
+            frameHeight: 68
+        });
+        this.load.spritesheet("jumpArrow", jumpArrow, {
+            frameWidth: 162,
+            frameHeight: 68
+        });
 
         this.load.spritesheet("bonus1", bonus1, {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+
+        this.load.spritesheet("bonus2", bonus2, {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        this.load.spritesheet("bonus3", bonus3, {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        this.load.spritesheet("bonus4", bonus4, {
             frameWidth: 32,
             frameHeight: 32
         });
@@ -59,6 +87,7 @@ export default class MainScene extends Phaser.Scene {
         return null
     }
     create() {
+        this.input.addPointer(3);
         this.skyTileSprite = this.add.tileSprite(0, 0, this.game.config.width, this.game.config.height, 'sky')
             .setOrigin(0, 0)
             .setScale(5)
@@ -93,6 +122,10 @@ export default class MainScene extends Phaser.Scene {
 
         this.setCustomBodySize(this.map, 'floor', 'treePlatform');
 
+
+        this.scoreText = this.add.text(this.game.config.width * 0.05, this.game.config.height * .05, `Zebrane misie: ${this.bears}`, { fontFamily: 'Anton', fontSize: '24px' }).setDepth(1);
+
+        this.scoreText.setScrollFactor(0, 0);
 
         // add player
         this.player = this.physics.add.sprite(playerSpawnPlace.x, playerSpawnPlace.y, "player");
@@ -156,7 +189,8 @@ export default class MainScene extends Phaser.Scene {
             let bonusesData = this.findTilemapObject(this.map, 'playerSpawn', `Bonus${index}`)
             console.log(bonusesData);
             if (bonusesData) {
-                this.bonuses.create(bonusesData.x, bonusesData.y, 'bonus1');
+                let bonusIndex = Phaser.Math.Between(1, 4);
+                this.bonuses.create(bonusesData.x, bonusesData.y, 'bonus' + bonusIndex);
 
             }
         }
@@ -191,6 +225,8 @@ export default class MainScene extends Phaser.Scene {
             } else {
                 gameObjectB.destroy();
             }
+            this.bears += 1;
+            this.scoreText.setText(`Zebrane misie: ${this.bears}`);
         }, null, this);
 
         // let coins = this.add.group();
@@ -225,10 +261,11 @@ export default class MainScene extends Phaser.Scene {
         // making the camera follow the player
         this.myCam.startFollow(this.player);
         //this.cameras.main.zoom = 1.7;
-        this.createGamepad();
+
 
         window.gra = this;
         this.gameRestartState = 0;
+        this.createGamepad();
     }
     setCustomBodySize(map, layername, objectname) {
         //(this.map, "floor", 'PlayerSpawner');
@@ -249,26 +286,39 @@ export default class MainScene extends Phaser.Scene {
     createGamepad() {
         //Gamepad
         let height = this.cameras.main.height * .9;
-        this.add.image(0, height, 'leftArrow')
+        console.log('dupa', height);
+        this.leftArrowController = this.add.sprite(0, height, 'leftArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.move = 'left';
+                this.leftArrowController
+                    .setFrame(1)
             }).on('pointerup', () => {
                 this.move = null;
-            }).setScrollFactor(0,0);
-        this.add.image(100, height, 'rightArrow')
+                this.leftArrowController.setFrame(0);
+            }).setScrollFactor(0, 0)
+            .setAlpha(0.7);
+        this.rightArrowController = this.add.image(100, height, 'rightArrow')
             .setOrigin(0, 0).setInteractive()
+            .setFrame(1)
             .on('pointerdown', (pointer1) => {
                 this.move = 'right';
+                this.rightArrowController.setFrame(0);
             }).on('pointerup', () => {
                 this.move = null;
-            }).setScrollFactor(0,0);
+                this.rightArrowController.setFrame(1);
+            }).setScrollFactor(0, 0)
+            .setAlpha(0.7);
 
-        this.jumpArrowController = this.add.image(this.game.config.width * .9, height, 'jumpArrow')
+        this.jumpArrowController = this.add.image(this.game.config.width * .55, height, 'jumpArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.player.setVelocityY(-370);
-            }).setScrollFactor(0,0);
+                this.jumpArrowController.setFrame(1);
+            }).on('pointerup', (pointer1) => {
+                this.jumpArrowController.setFrame(0);
+            }).setScrollFactor(0, 0)
+            .setAlpha(.7);
     }
     update() {
 

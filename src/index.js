@@ -8,8 +8,8 @@ import EndGame from './scenes/EndGame.js';
 const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: 360 ,
+  height: 640,
   scene: [MainScene, GameOver, EndGame],
   scale: {
     mode: Phaser.Scale.FIT,
