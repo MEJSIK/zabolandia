@@ -78,7 +78,7 @@ export default class MainScene extends Phaser.Scene {
 
 
 
-        this.map = this.make.tilemap({ key: 'level1', tileWidth: 32, tileHeight: 32 });
+        this.map = this.make.tilemap({ key: 'level1' });
         let tileset = this.map.addTilesetImage('lvl2_sprites', 'tilesetNameInPhaser');
         this.floor = this.map.createStaticLayer('floor', tileset, 0, 0);
         this.collisions = this.map.createStaticLayer('collisions', tileset, 0, 0).setAlpha(0);
@@ -224,8 +224,8 @@ export default class MainScene extends Phaser.Scene {
 
         // making the camera follow the player
         this.myCam.startFollow(this.player);
-        this.cameras.main.zoom = 1.7;
-        //this.createGamepad();
+        //this.cameras.main.zoom = 1.7;
+        this.createGamepad();
 
         this.gameRestartState = 0;
     }
@@ -247,26 +247,27 @@ export default class MainScene extends Phaser.Scene {
 
     createGamepad() {
         //Gamepad
-        this.add.image(0, 0, 'leftArrow')
+        let height = this.game.config.height * .9;
+        this.add.image(0, height, 'leftArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.move = 'left';
             }).on('pointerup', () => {
                 this.move = null;
-            });
-        this.add.image(100, 0, 'rightArrow')
+            }).setScrollFactor(0,0);
+        this.add.image(100, height, 'rightArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.move = 'right';
             }).on('pointerup', () => {
                 this.move = null;
-            });
+            }).setScrollFactor(0,0);
 
-        this.jumpArrowController = this.add.image(500, 0, 'jumpArrow')
+        this.jumpArrowController = this.add.image(600, height, 'jumpArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.player.setVelocityY(-370);
-            })
+            }).setScrollFactor(0,0);
     }
     update() {
 
