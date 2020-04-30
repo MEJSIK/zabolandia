@@ -59,7 +59,7 @@ export default class MainScene extends Phaser.Scene {
         return null
     }
     create() {
-        this.skyTileSprite = this.add.image(0, 0, 'sky')
+        this.skyTileSprite = this.add.tileSprite(0, 0, this.game.config.width, this.game.config.height, 'sky')
             .setOrigin(0, 0)
             .setScale(5)
             .setScrollFactor(0)
@@ -227,6 +227,7 @@ export default class MainScene extends Phaser.Scene {
         //this.cameras.main.zoom = 1.7;
         this.createGamepad();
 
+        window.gra = this;
         this.gameRestartState = 0;
     }
     setCustomBodySize(map, layername, objectname) {
@@ -247,7 +248,7 @@ export default class MainScene extends Phaser.Scene {
 
     createGamepad() {
         //Gamepad
-        let height = this.game.config.height * .9;
+        let height = this.cameras.main.height * .9;
         this.add.image(0, height, 'leftArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
@@ -263,7 +264,7 @@ export default class MainScene extends Phaser.Scene {
                 this.move = null;
             }).setScrollFactor(0,0);
 
-        this.jumpArrowController = this.add.image(600, height, 'jumpArrow')
+        this.jumpArrowController = this.add.image(this.game.config.width * .9, height, 'jumpArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
                 this.player.setVelocityY(-370);
