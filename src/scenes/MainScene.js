@@ -153,11 +153,12 @@ export default class MainScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, [this.enemies, this.enemies2], (gameObjectA, gameObjectB) => {
             if (gameObjectA.name !== 'Player') {
                 gameObjectB.setVelocityY(-600);
-                this.restartGame();
             } else {
                 gameObjectA.setVelocityY(-600);
-                this.restartGame();
             }
+
+            this.sound.play('gameOverSound');
+            this.restartGame();
         }, null, this);
 
         this.physics.add.overlap(this.player, [this.bonuses], (gameObjectA, gameObjectB) => {
@@ -168,6 +169,7 @@ export default class MainScene extends Phaser.Scene {
             }
             this.bears += 1;
             this.scoreText.setText(`Zebrane misie: ${this.bears}`);
+            this.sound.play('collectBounusSound');
         }, null, this);
 
         // let coins = this.add.group();
@@ -256,6 +258,7 @@ export default class MainScene extends Phaser.Scene {
             .on('pointerdown', (pointer1) => {
                 if(this.onGround){
                     this.player.setVelocityY(-370);
+                    this.sound.play('jumpSound');
                     this.jumpArrowController.setFrame(1);
                 }
             }).on('pointerup', (pointer1) => {
@@ -286,7 +289,7 @@ export default class MainScene extends Phaser.Scene {
 
         if ((this.cursors.up.isDown || this.cursors.space.isDown) && this.onGround) {
             this.player.setVelocityY(-370);
-
+            this.sound.play('jumpSound');
         }
 
 

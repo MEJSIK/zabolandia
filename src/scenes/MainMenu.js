@@ -3,7 +3,6 @@ import lvl1_map from "../assets/levels/lvl2.json"
 import lvl1_sprites from "../assets/levels/lvl1_assets.png"
 import player_sprites from '../assets/bee.png';
 import enemy1_sprites from '../assets/characters/enemies/enemy1_spritesheet.png';
-import coin from '../assets/coin.png';
 import clouds from '../assets/clouds_tilesprite.png';
 import sky from '../assets/sky.png';
 import mountains from '../assets/mountains.png';
@@ -16,6 +15,10 @@ import bonus2 from '../assets/bonus2.png';
 import bonus3 from '../assets/bonus3.png';
 import bonus4 from '../assets/bonus4.png';
 import playBtnSprites from '../assets/play_button.png';
+import jumpSound from '../assets/sounds/jumpSound.mp3';
+import gameOverSound from '../assets/sounds/gameOver.mp3';
+import collectBounusSound from '../assets/sounds/collectBonus.mp3';
+import playAgainBtn from '../assets/playAgain_button.png';
 
 export default class MainGame extends Phaser.Scene {
     constructor() {
@@ -23,9 +26,19 @@ export default class MainGame extends Phaser.Scene {
     }
 
     preload() {
+        // mp3
+        this.load.audio('jumpSound', jumpSound);
+        this.load.audio('gameOverSound', gameOverSound);
+        this.load.audio('collectBounusSound', collectBounusSound);
+
+
         this.load.tilemapTiledJSON("level1", lvl1_map);
         this.load.image('tilesetNameInPhaser', lvl1_sprites);
         this.load.spritesheet("play_button", playBtnSprites, {
+            frameWidth: 80,
+            frameHeight: 40
+        });
+        this.load.spritesheet("playAgain_button", playAgainBtn, {
             frameWidth: 80,
             frameHeight: 40
         });
@@ -37,7 +50,6 @@ export default class MainGame extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32
         });
-        this.load.image('coin', coin);
         this.load.image('clouds', clouds);
         this.load.image('sky', sky);
         this.load.image('mountains', mountains);
