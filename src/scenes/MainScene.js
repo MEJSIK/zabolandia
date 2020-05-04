@@ -72,9 +72,9 @@ export default class MainScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(playerSpawnPlace.x, playerSpawnPlace.y, "player");
         window.player = this.player;
         this.anims.create({
-            key: "fly",
+            key: "walk",
             frames: this.anims.generateFrameNumbers("player"),
-            frameRate: 60,
+            frameRate: 15,
             repeat: -1
         });
         this.anims.create({
@@ -83,8 +83,8 @@ export default class MainScene extends Phaser.Scene {
             frameRate: 4,
             repeat: -1
         });
-        this.player.play("fly");
-        this.player.body.setSize(32, 32);
+    
+        //this.player.body.setSize(32, 32);
         this.player.setName('Player');
         //this.player.setCollideWorldBounds(true);
 
@@ -126,9 +126,9 @@ export default class MainScene extends Phaser.Scene {
             collideWorldBounds: false,
             allowGravity: false
         });
-        for (let index = 1; index <= 3; index++) {
+        for (let index = 1; index <= 4; index++) {
             let bonusesData = this.findTilemapObject(this.map, 'playerSpawn', `Bonus${index}`)
-            console.log(bonusesData);
+            // console.log(bonusesData);
             if (bonusesData) {
                 let bonusIndex = Phaser.Math.Between(1, 4);
                 this.bonuses.create(bonusesData.x, bonusesData.y, 'bonus' + bonusIndex);
@@ -147,7 +147,8 @@ export default class MainScene extends Phaser.Scene {
 
             this.cameras.main.on('camerafadeoutcomplete', () => {
 
-                this.scene.start('EndGame');
+               // this.scene.start('EndGame');
+               this.scene.start('MainSceneTwo');
             })
         }, null, this);
         this.physics.add.overlap(this.player, [this.enemies, this.enemies2], (gameObjectA, gameObjectB) => {
@@ -213,7 +214,7 @@ export default class MainScene extends Phaser.Scene {
     setCustomBodySize(map, layername, objectname) {
         //(this.map, "floor", 'PlayerSpawner');
         window.map = map;
-        console.log(map);
+        //console.log(map);
         // for (let l = 0; l < map.layers.length; l++) {
         //     if (map.layers[l].name == layername) {
         //         for (let i = 0; i < map.objects[l].objects.length; i++) {
@@ -229,7 +230,7 @@ export default class MainScene extends Phaser.Scene {
     createGamepad() {
         //Gamepad
         let height = this.cameras.main.height * .9;
-        console.log('dupa', height);
+        //console.log('dupa', height);
         this.leftArrowController = this.add.sprite(0, height, 'leftArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
@@ -277,14 +278,21 @@ export default class MainScene extends Phaser.Scene {
         this.onGround = this.player.body.blocked.down || this.player.body.touching.down;
         if (this.cursors.left.isDown || this.move == 'left') {
             this.player.setVelocityX(-180);
-            this.player.flipX = false;
+            this.player.flipX = true;
+            if(!this.player.anims.isPlaying){
+                this.player.play("walk");
+            }
 
         } else if (this.cursors.right.isDown || this.move == 'right') {
             this.player.setVelocityX(180);
-            this.player.flipX = true;
+            this.player.flipX = false;
+            if(!this.player.anims.isPlaying){
+                this.player.play("walk");
+            }
 
         } else {
             this.player.setVelocityX(0);
+            this.player.anims.stop("walk");
         }
 
         if ((this.cursors.up.isDown || this.cursors.space.isDown) && this.onGround) {

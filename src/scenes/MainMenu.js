@@ -1,10 +1,15 @@
 
-import lvl1_map from "../assets/levels/lvl2.json"
-import lvl1_sprites from "../assets/levels/lvl1_assets.png"
-import player_sprites from '../assets/bee.png';
+import lvl1_map from "../assets/levels/lvl1/lvl1.json"
+import lvl1_sprites from "../assets/levels/lvl1/lvl1_assets.png"
+
+import lvl2_map from "../assets/levels/lvl2/lvl2.json"
+import lvl2_sprites from "../assets/levels/lvl2/lvl2_assets.png"
+
+import player_sprites from '../assets/characters/Kuba/Kuba_spritesheet.png';
 import enemy1_sprites from '../assets/characters/enemies/enemy1_spritesheet.png';
 import clouds from '../assets/clouds_tilesprite.png';
 import sky from '../assets/sky.png';
+import sky_yellow from '../assets/sky_yellow.png';
 import mountains from '../assets/mountains.png';
 import mountains2 from '../assets/mountains_2.png';
 import leftArrow from '../assets/left_arrow.png';
@@ -34,6 +39,9 @@ export default class MainGame extends Phaser.Scene {
 
         this.load.tilemapTiledJSON("level1", lvl1_map);
         this.load.image('tilesetNameInPhaser', lvl1_sprites);
+        this.load.tilemapTiledJSON("level2", lvl2_map);
+        this.load.image('lvl2_tileset', lvl2_sprites);
+
         this.load.spritesheet("play_button", playBtnSprites, {
             frameWidth: 80,
             frameHeight: 40
@@ -43,8 +51,8 @@ export default class MainGame extends Phaser.Scene {
             frameHeight: 40
         });
         this.load.spritesheet("player", player_sprites, {
-            frameWidth: 37,
-            frameHeight: 39
+            frameWidth: 32,
+            frameHeight: 64
         });
         this.load.spritesheet("enemy1", enemy1_sprites, {
             frameWidth: 32,
@@ -52,6 +60,7 @@ export default class MainGame extends Phaser.Scene {
         });
         this.load.image('clouds', clouds);
         this.load.image('sky', sky);
+        this.load.image('sky_yellow', sky_yellow);
         this.load.image('mountains', mountains);
         this.load.image('mountains2', mountains2);
         this.load.spritesheet("leftArrow", leftArrow, {
