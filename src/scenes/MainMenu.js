@@ -44,15 +44,15 @@ export default class MainGame extends Phaser.Scene {
         this.load.image('mountains2', mountains2);
         this.load.spritesheet("leftArrow", leftArrow, {
             frameWidth: 80,
-            frameHeight: 68
+            frameHeight: 60
         });
         this.load.spritesheet("rightArrow", rightArrow, {
             frameWidth: 80,
-            frameHeight: 68
+            frameHeight: 60
         });
         this.load.spritesheet("jumpArrow", jumpArrow, {
-            frameWidth: 162,
-            frameHeight: 68
+            frameWidth: 160,
+            frameHeight: 60
         });
 
         this.load.spritesheet("bonus1", bonus1, {
