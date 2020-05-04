@@ -1,21 +1,6 @@
 import Phaser from "phaser";
 import Enemy from '../classes/Enemy';
-import lvl1_map from "../assets/levels/lvl2.json"
-import lvl1_sprites from "../assets/levels/lvl1_assets.png"
-import player_sprites from '../assets/bee.png';
-import enemy1_sprites from '../assets/characters/enemies/enemy1_spritesheet.png';
-import coin from '../assets/coin.png';
-import clouds from '../assets/clouds_tilesprite.png';
-import sky from '../assets/sky.png';
-import mountains from '../assets/mountains.png';
-import mountains2 from '../assets/mountains_2.png';
-import leftArrow from '../assets/left_arrow.png';
-import rightArrow from '../assets/right_arrow.png';
-import jumpArrow from '../assets/jump_arrow.png';
-import bonus1 from '../assets/bonus1.png';
-import bonus2 from '../assets/bonus2.png';
-import bonus3 from '../assets/bonus3.png';
-import bonus4 from '../assets/bonus4.png';
+
 
 export default class MainScene extends Phaser.Scene {
     constructor() {
@@ -26,51 +11,7 @@ export default class MainScene extends Phaser.Scene {
         this.bears = 0;
     }
     preload() {
-        this.load.tilemapTiledJSON("level1", lvl1_map);
-        this.load.image('tilesetNameInPhaser', lvl1_sprites);
-        this.load.spritesheet("player", player_sprites, {
-            frameWidth: 37,
-            frameHeight: 39
-        });
-        this.load.spritesheet("enemy1", enemy1_sprites, {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-        this.load.image('coin', coin);
-        this.load.image('clouds', clouds);
-        this.load.image('sky', sky);
-        this.load.image('mountains', mountains);
-        this.load.image('mountains2', mountains2);
-        this.load.spritesheet("leftArrow", leftArrow, {
-            frameWidth: 80,
-            frameHeight: 68
-        });
-        this.load.spritesheet("rightArrow", rightArrow, {
-            frameWidth: 80,
-            frameHeight: 68
-        });
-        this.load.spritesheet("jumpArrow", jumpArrow, {
-            frameWidth: 162,
-            frameHeight: 68
-        });
-
-        this.load.spritesheet("bonus1", bonus1, {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-
-        this.load.spritesheet("bonus2", bonus2, {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-        this.load.spritesheet("bonus3", bonus3, {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-        this.load.spritesheet("bonus4", bonus4, {
-            frameWidth: 32,
-            frameHeight: 32
-        });
+        
     }
 
     findTilemapObject(map, layer, name) {
@@ -313,8 +254,10 @@ export default class MainScene extends Phaser.Scene {
         this.jumpArrowController = this.add.image(this.game.config.width * .55, height, 'jumpArrow')
             .setOrigin(0, 0).setInteractive()
             .on('pointerdown', (pointer1) => {
-                this.player.setVelocityY(-370);
-                this.jumpArrowController.setFrame(1);
+                if(this.onGround){
+                    this.player.setVelocityY(-370);
+                    this.jumpArrowController.setFrame(1);
+                }
             }).on('pointerup', (pointer1) => {
                 this.jumpArrowController.setFrame(0);
             }).setScrollFactor(0, 0)
@@ -328,7 +271,7 @@ export default class MainScene extends Phaser.Scene {
         this.mounatins2TileSprite.tilePositionX = this.myCam.scrollX * 0.7;
 
 
-        let onGround = this.player.body.blocked.down || this.player.body.touching.down;
+        this.onGround = this.player.body.blocked.down || this.player.body.touching.down;
         if (this.cursors.left.isDown || this.move == 'left') {
             this.player.setVelocityX(-180);
             this.player.flipX = false;
@@ -341,7 +284,7 @@ export default class MainScene extends Phaser.Scene {
             this.player.setVelocityX(0);
         }
 
-        if ((this.cursors.up.isDown || this.cursors.space.isDown) && onGround) {
+        if ((this.cursors.up.isDown || this.cursors.space.isDown) && this.onGround) {
             this.player.setVelocityY(-370);
 
         }

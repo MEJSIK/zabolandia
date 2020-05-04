@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import MainScene from './scenes/MainScene.js';
 import GameOver from './scenes/GameOver.js';
 import EndGame from './scenes/EndGame.js';
+import MainMenu from './scenes/MainMenu.js';
 
 
 
@@ -10,7 +11,7 @@ const config = {
   parent: "phaser-example",
   width: 360 ,
   height: 640,
-  scene: [MainScene, GameOver, EndGame],
+  scene: [MainMenu, MainScene, GameOver, EndGame],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
